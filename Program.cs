@@ -1,69 +1,25 @@
 ﻿using System;
-using System.Globalization;
-using System.Linq;
-using System.Security.Cryptography.X509Certificates;
+using System.IO;
 
 class Program
 {
     static void Main()
     {
-        Console.WriteLine("Введіть текст: ");
-        string inputText = Console.ReadLine();
+        string inputFilePath = "input.txt";
+        string outputFilePath = "output.txt"; 
 
-        string[] words = inputText.Split(new[] { ' ', '\t', '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries);
-        int countEqualVowelsConsonants = CountWordsWithEqualVowelsConsonants(words);
-
-        Console.WriteLine($"Кількість слів які містять однакову кількість голосних і приголосних літер: {countEqualVowelsConsonants}");
-
-        string longestWord = FindLongestWord(words);
-        Console.WriteLine($"Найдовше слово: {longestWord}");
-    }
-    static int CountWordsWithEqualVowelsConsonants(string[] words)
-    {
-        int count = 0;
-        foreach (string word in words)
+        try
         {
-            if (HasEqualVowelsConsonants(word))
-            {
-                count++;
-            }
+            string inputText = File.ReadAllText(inputFilePath);
+            string[] words = inputText.Split(new char[] { ' ', '.', ',', '!', '?', '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
+            int wordCount = words.Length;
+
+            File.WriteAllText(outputFilePath, $"Кількість слів у тексті: {wordCount}");
+            Console.WriteLine("Кількість слів була записана у вихідний файл.");
         }
-        return count;
-    }
-
-    static bool HasEqualVowelsConsonants(string word)
-    {
-        int vowels = 0;
-        int consonants = 0;
-
-        foreach (char c in word.ToLower())
+        catch (IOException e)
         {
-            if (char.IsLetter(c))
-            {
-                if ("aeiouаеиоуі".Contains(c))
-                {
-                    vowels++;
-                }
-                else
-                {
-                    consonants++;
-                }
-            }
+            Console.WriteLine("Помилка читання/запису файлу: " + e.Message);
         }
-
-        return vowels == consonants;
-    }
-
-    static string FindLongestWord(string[] words)
-    {
-        string longestWord = "";
-        foreach (string word in words)
-        {
-            if (word.Length > longestWord.Length)
-            {
-                longestWord = word;
-            }
-        }
-        return longestWord;
     }
 }
